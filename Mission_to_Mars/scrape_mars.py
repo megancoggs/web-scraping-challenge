@@ -7,7 +7,7 @@ import pandas as pd
 
 def init_browser():
     executable_path = {'executable_path': 'chromedriver.exe'}
-    browser = Browser('chrome', **executable_path, headless=False)
+    return Browser('chrome', **executable_path, headless=False)
 
 def scrape():
     browser = init_browser()
@@ -47,8 +47,9 @@ def scrape():
     soup = bs(html, "html.parser")
 
     # Find url of featured image
+    base_url = "https://www.jpl.nasa.gov/"
     image_url = soup.find("a", class_ = "button fancybox")["data-fancybox-href"]
-    featured_image_url = url + image_url
+    featured_image_url = base_url + image_url
     featured_image_url
 
 # -------------------------------------------
@@ -105,7 +106,7 @@ def scrape():
         time.sleep(5)
         html = browser.html
         soup = bs(html, "html.parser")
-        img_url = soup.find("img", class_ = "wide-image")["src"]
+        img_url = base_url + soup.find("img", class_ = "wide-image")["src"]
         
         # Store title and url to dictionary
         url_dict = {"title": title, "img_url": img_url}
@@ -124,5 +125,7 @@ def scrape():
     mars_dict["featured_image_url"] = featured_image_url
     mars_dict["mars_html_table"] = mars_html_table
     mars_dict["hemisphere_image_urls"] = hemisphere_image_urls
+
+    browser.quit()
 
     return mars_dict
